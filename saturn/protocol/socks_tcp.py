@@ -14,6 +14,7 @@ class Socks5TcpServer(asyncio.Protocol):
         self.dispatcher = Dispatcher(self.server, self.loop, self)
 
     def data_received(self, data):
+        print(data)
         asyncio.Task(self.async_data_handler(data))
 
     def connection_lost(self, exc) -> None:

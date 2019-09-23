@@ -11,7 +11,6 @@ class TcpClient(asyncio.Protocol):
         self.on_connect.set_result(True)
 
     def data_received(self, data):
-        print(data)
         self.dispatcher.server_protocol.transport.write(data)
 
     def connection_lost(self, exc):
