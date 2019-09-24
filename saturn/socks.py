@@ -1,11 +1,11 @@
-from ipaddress import IPv6Address, IPv4Address
+from ipaddress import IPv6Address, IPv4Address, AddressValueError
 from saturn import state
 from saturn.protocol.client_tcp import TcpClient
 
 
 class SocksPacket:
     def __init__(self, data):
-        assert data[0] == 5
+        # assert data[0] == 5
         self.ver = 5
 
 
@@ -19,9 +19,9 @@ class SocksHello(SocksPacket):
     def reply(self, server):
         for m in self.dispatcher.server.server_auth_methods:
             if m in self.methods:
-                self.dispatcher.state = state.WaitingAuthenticationData(method=m)
+                self.dispatcher.state = state.WaitingAuthenticationData(method=m) if not m == 0 else state.Authenticated()
                 return self.ver.to_bytes(1, byteorder='big') + int.to_bytes(m, 1, byteorder='big')
-        return self.ver.to_bytes(1, byteorder='big') + int.to_bytes(5, 1, byteorder='big')
+        return self.ver.to_bytes(1, byteorder='big') + int.to_bytes(255, 1, byteorder='big')
 
 
 class SocksAuthenticate:
@@ -34,7 +34,7 @@ class SocksAuthenticate:
         if await self.server.auth(self.dispatcher.state.method, self.data):
             self.dispatcher.state = state.Authenticated()
             return int(1).to_bytes(1, byteorder='big') + int(0).to_bytes(1, byteorder='big')
-        return int(1).to_bytes(1, byteorder='big') + int(1).to_bytes(1, byteorder='big')
+        return int(1).to_bytes(1, byteorder='big') + int(10).to_bytes(1, byteorder='big')
 
 
 class SocksTcpRequest:
@@ -54,14 +54,21 @@ class SocksTcpRequest:
         self.dst_port = int.from_bytes(data[-2:], byteorder='big')
 
     async def connect(self):
+        assert not isinstance(self.dispatcher.state, state.Connected)
         on_connect = self.dispatcher.loop.create_future()
-        self.dispatcher.client_transport, self.client_protocol = await self.dispatcher.loop.create_connection(
-            lambda: TcpClient(self.dispatcher, on_connect),
-            str(self.dst_addr), self.dst_port)
+        try:
+            self.dispatcher.client_transport, self.client_protocol = await self.dispatcher.loop.create_connection(
+                lambda: TcpClient(self.dispatcher, on_connect),
+                str(self.dst_addr), self.dst_port)
+
+        except OSError as e :
+            print(e.errno)
+            return SocksTcpReply(self.dispatcher, 5, 1, 0, 1, int(IPv4Address('0.0.0.0')), 1)
         self.dispatcher.connected = True
         await on_connect
         self.dispatcher.state = state.Connected()
-        return SocksTcpReply(self.dispatcher, 5, 0, 0, 1, int(IPv4Address('192.168.1.45')), 8080)
+        sock_info = self.dispatcher.client_transport.get_extra_info('socket').getsockname()
+        return SocksTcpReply(self.dispatcher, 5, 0, 0, 1, int(IPv4Address('80.211.196.34')), 8081)
 
     async def bind(self):
         pass

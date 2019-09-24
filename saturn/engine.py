@@ -25,6 +25,8 @@ class Server:
         for m in self.auth_methods:
             if m.method == method:
                 return await m.authenticate(*args, **kwargs)
+        else:
+            return False
 
     def start(self):
         loop = asyncio.new_event_loop()

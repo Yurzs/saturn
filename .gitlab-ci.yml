@@ -1,6 +1,7 @@
 stages:
   - unittests
   - build
+  - test_install
 
 tests:
   stage: unittests
@@ -17,6 +18,6 @@ pypi_build:
     - apk update
     - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
     - pip3 install -U setuptools pip twine
-    - python3 generate_setup.py
     - python3 setup.py sdist
     - twine upload dist/*
+    - pip3 install neptune_resolver_redis
