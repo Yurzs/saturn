@@ -1,6 +1,6 @@
 import asyncio
 from saturn.dispatcher import Dispatcher
-from saturn import state
+
 
 class Socks5TcpServer(asyncio.Protocol):
 
@@ -11,7 +11,7 @@ class Socks5TcpServer(asyncio.Protocol):
 
     def connection_made(self, transport):
         self.transport = transport
-        self.dispatcher = Dispatcher(self.server, self.loop, self)
+        self.dispatcher = Dispatcher(self.server, self.loop, self, transport)
 
     def data_received(self, data):
         asyncio.Task(self.async_data_handler(data))
@@ -23,20 +23,25 @@ class Socks5TcpServer(asyncio.Protocol):
     def async_data_handler(self, data: bytes) -> None:
         reply = yield from self.dispatcher.handle(data)
         if reply:
-            print(self.dispatcher, self.dispatcher.state, data, reply)
-            self.transport.write(reply)
+            self.transport.write(bytes(reply))
         else:
-            if not isinstance(self.dispatcher.state, state.Connected):
-                print('fail', self.dispatcher, self.dispatcher.state, data)
+            # if not isinstance(dispatcher.state, state.Connected):
+            #     print('fail',dispatcher.server_transport.get_extra_info('peername'), dispatcher, dispatcher.state, data)
             return
 
     async def start_server(self, host='0.0.0.0', port=8080):
         server = await self.loop.create_server(
-            lambda: self, host, port)
+            lambda: Socks5TcpServer(self.server, self.loop), host, port)
         async with server:
             await server.serve_forever()
 
+async def main(server, loop):
+    server = await loop.create_server(
+        lambda: Socks5TcpServer(server, loop), host='0.0.0.0', port=8082)
+    async with server:
+        await server.serve_forever()
 
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
-    loop.run_until_complete(Socks5TcpServer(loop).start_server())
+    loop.run_until_complete(main(loop))
+    # loop.run_until_complete(Socks5TcpServer(loop).start_server())

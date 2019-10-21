@@ -3,8 +3,7 @@ from saturn import protocol, config
 
 
 class Server:
-    def __init__(self, host, port,
-                 tcp=True, udp=False):
+    def __init__(self, host, port, tcp=True, udp=False):
         self.host = host
         self.port = port
         self.tcp = tcp
@@ -34,8 +33,3 @@ class Server:
         if self.tcp:
             loop.create_task(protocol.Socks5TcpServer(self, loop).start_server(self.host, self.port))
         loop.run_forever()
-
-
-if __name__ == '__main__':
-    server = Server('0.0.0.0', 8081)
-    server.start()

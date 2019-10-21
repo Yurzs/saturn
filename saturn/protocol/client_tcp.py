@@ -8,16 +8,13 @@ class TcpClient(asyncio.Protocol):
 
     def connection_made(self, transport):
         self.transport = transport
-        print('connected')
         self.on_connect.set_result(True)
 
     def data_received(self, data):
-        print('got data')
         self.dispatcher.reply(data)
 
     def connection_lost(self, exc):
-        print('con lost')
-        self.dispatcher.server_protocol.transport.close()
+        self.dispatcher.server_transport.close()
 
     def send(self, data):
         self.transport.write(data)

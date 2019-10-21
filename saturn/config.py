@@ -1,7 +1,8 @@
 
-
-AUTHENTICATION_METHODS = ['saturn.auth.none']
+AUTHENTICATION_METHODS = ['saturn.auth.dict']
 
 SATURN_AUTH_DICT = {
-    'test_user': 'Test_password'
+    'USER_TEST': 'Test_password'
 }
+
+ALLOWED_DESTINATIONS = ['0.0.0.0/0']
