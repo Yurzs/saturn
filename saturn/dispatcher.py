@@ -1,5 +1,6 @@
 from saturn import state
-from saturn.socks import SocksTcpRequest, SocksHello, SocksAuthenticate
+from saturn.socks import SocksHello, SocksAuthenticate
+from saturn.socks.request import SocksRequest
 
 
 class Dispatcher:
@@ -14,17 +15,14 @@ class Dispatcher:
 
     async def handle(self, data):
         result = None
-        # if (not isinstance(self.state, state.Connected) or not isinstance(self.state, state.Authenticated)) and \
-        #         data[0] == 5 and len(data) == data[1] + 2:
-        #     self.state = state.NotAuthenticated()
         if isinstance(self.state, state.Connected):
             self.client_transport.write(data)
         elif isinstance(self.state, state.NotAuthenticated):
             result = SocksHello(self, data).reply()
-        elif isinstance(self.state, state.WaitingAuthenticationData) and data[0] == 1:
+        elif isinstance(self.state, state.WaitingAuthenticationData):
             result = await SocksAuthenticate(self, data).authenticate()
-        elif isinstance(self.state, state.Authenticated) and data[0] == 5 and len(data) >=10:
-            request = SocksTcpRequest.parse(self, data)
+        elif isinstance(self.state, state.Authenticated):
+            request = SocksRequest.parse(self, data)
             result = await request.go()
         return result
 

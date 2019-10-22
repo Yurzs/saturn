@@ -1,17 +1,17 @@
 stages:
-#  - unittests
+  - unittests
   - build
 
-#tests:
-#  stage: unittests
-#  tags:
-#    - alpine
-#  script:
-#    - apk update
-#    - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
-#    - pip3 install -U setuptools pip
-#    - pip3 install --no-cache-dir -r requirements.txt
-#    - python3 -m unittest discover tests *_test.py
+tests:
+  stage: unittests
+  tags:
+    - alpine
+  script:
+    - apk update
+    - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
+    - pip3 install -U setuptools pip
+    - pip3 install --no-cache-dir -r requirements.txt
+    - python3 -m unittest discover tests *_test.py
 
 pypi_build:
   stage: build

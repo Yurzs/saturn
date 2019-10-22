@@ -1,4 +1,5 @@
 import asyncio
+
 from saturn.dispatcher import Dispatcher
 
 
@@ -25,8 +26,6 @@ class Socks5TcpServer(asyncio.Protocol):
         if reply:
             self.transport.write(bytes(reply))
         else:
-            # if not isinstance(dispatcher.state, state.Connected):
-            #     print('fail',dispatcher.server_transport.get_extra_info('peername'), dispatcher, dispatcher.state, data)
             return
 
     async def start_server(self, host='0.0.0.0', port=8080):
@@ -35,13 +34,14 @@ class Socks5TcpServer(asyncio.Protocol):
         async with server:
             await server.serve_forever()
 
+
 async def main(server, loop):
     server = await loop.create_server(
         lambda: Socks5TcpServer(server, loop), host='0.0.0.0', port=8082)
     async with server:
         await server.serve_forever()
 
+
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
     loop.run_until_complete(main(loop))
-    # loop.run_until_complete(Socks5TcpServer(loop).start_server())

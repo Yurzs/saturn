@@ -1,20 +1,23 @@
 import asyncio
+
 from saturn import protocol, config
 
 
 class Server:
-    def __init__(self, host, port, tcp=True, udp=False):
+    def __init__(self, host, port, tcp=True, udp=False, custom_auth=None):
         self.host = host
         self.port = port
         self.tcp = tcp
         self.udp = udp
         self.auth_methods = []
+        self.auth_config = config.AUTHENTICATION_METHODS if custom_auth is None else custom_auth
 
     def init_auth_methods(self):
-        for method in config.AUTHENTICATION_METHODS:
-            m = __import__(method, globals=globals(), fromlist=[''])
-            self.auth_methods.append(m.Authenticator(**getattr(config, method.upper().replace('.', '_'), {})))
-
+        for method in self.auth_config:
+            m = __import__(method, globals=globals(), fromlist=[""])
+            self.auth_methods.append(m.Authenticator(**getattr(config, method.upper().replace(".", "_"), {})))
+        if not self.auth_methods:
+            raise Exception("Server have no auth methods. Please fill in AUTHENTICATION_METHODS")
 
     @property
     def server_auth_methods(self):
@@ -33,3 +36,8 @@ class Server:
         if self.tcp:
             loop.create_task(protocol.Socks5TcpServer(self, loop).start_server(self.host, self.port))
         loop.run_forever()
+
+
+if __name__ == "__main__":
+    server = Server("0.0.0.0", 8081)
+    server.start()
