@@ -25,6 +25,7 @@ pypi_build:
     - python3 setup.py sdist
     - twine upload dist/*
 
+
 docker_build:
   stage: docker_build
   tags:
@@ -34,3 +35,5 @@ docker_build:
     - docker push "$CI_REGISTRY_IMAGE"
   only:
     - master
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
