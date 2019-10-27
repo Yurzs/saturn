@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='saturn_proxy_server',  # How you named your package folder (MyLib)
     packages=find_packages(exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),  # Chose the same as "name"
-    version='0.3',  # Start with a small number and increase it with every change you make
+    version='0.5',  # Start with a small number and increase it with every change you make
     license='MIT',  # Chose a license from here: https://help.github.com/articles/licensing-a-repository
     long_description='''# Socks5 async proxy server
 Saturn is a SOCKS5 server based on asyncio protocols

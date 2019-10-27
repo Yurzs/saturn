@@ -1,6 +1,7 @@
 stages:
   - unittests
   - build
+  - docker_build
 
 tests:
   stage: unittests
@@ -21,7 +22,15 @@ pypi_build:
     - apk update
     - apk add --update --no-cache --virtual .build-deps alpine-sdk python3-dev musl-dev postgresql-dev libffi-dev
     - pip3 install -U setuptools pip twine
-    - python3 generate_setup.py
     - python3 setup.py sdist
     - twine upload dist/*
-    - pip3 install neptune_resolver_redis
+
+docker_build:
+  stage: docker_build
+  tags:
+    - docker
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - master
