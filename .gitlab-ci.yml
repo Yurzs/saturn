@@ -1,6 +1,6 @@
 stages:
-  - unittests
-  - build
+#  - unittests
+#  - build
   - docker_build
 
 tests:
@@ -37,3 +37,5 @@ docker_build:
     - master
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin docker.io
+  variables:
+    DOCKER_HOST: tcp://localhost:2375
