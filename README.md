@@ -34,3 +34,8 @@ All you need to do is to implement `Authenticator` class with `async def authent
 authentication result. Then just import your module and use it in config  
 `saturn.config.AUTHENTICATION_METHODS = ["your_auth_method"]`
 You can see examples in `saturn.auth`
+
+### TODO list
+- [ ] Logging
+- [ ] Max socket limit
+- [ ] More tests

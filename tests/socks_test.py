@@ -2,6 +2,12 @@ import unittest
 import saturn
 import asyncio
 
+class ServerTests(unittest.TestCase):
+
+    def test_auth_methods(self):
+        self.assertRaises(TypeError, saturn.engine.Server)
+        server = saturn.engine.Server()
+
 class SocksTests(unittest.TestCase):
 
     def test_hello_none_auth(self):
@@ -43,3 +49,4 @@ class SocksTests(unittest.TestCase):
         password = 'Test_password'
         req = b"\x05" + len(login).to_bytes(1, "big") + login.encode() + len(password).to_bytes(1, "big") + password.encode()
         self.assertEqual(b"\x01\x00", asyncio.run(saturn.socks.SocksAuthenticate(dispatcher, req).authenticate()))
+

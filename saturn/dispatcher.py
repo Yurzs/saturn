@@ -4,7 +4,7 @@ from saturn.socks.request import SocksRequest
 
 
 class Dispatcher:
-    def __init__(self, server, loop, protocol, transport):
+    def __init__(self, server, loop, transport):
         self.server_transport = transport
         self.server = server
         self.loop = loop

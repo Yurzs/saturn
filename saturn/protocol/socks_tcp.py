@@ -12,7 +12,7 @@ class Socks5TcpServer(asyncio.Protocol):
 
     def connection_made(self, transport):
         self.transport = transport
-        self.dispatcher = Dispatcher(self.server, self.loop, self, transport)
+        self.dispatcher = Dispatcher(self.server, self.loop, self.transport)
 
     def data_received(self, data):
         asyncio.Task(self.async_data_handler(data))

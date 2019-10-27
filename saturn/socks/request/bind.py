@@ -11,7 +11,7 @@ class SocksRequestBind(SocksRequest):
     action_id = 2
 
     async def go(self):
-        #  Check if CONNECTED
         port = random.randrange(30000, 65535)
+
         new_server = TcpServer(self.dispatcher, self.dispatcher.loop).start_server(port)
         return reply.Success(IPv4Address(socket.gethostbyname(socket.gethostname())), port)
