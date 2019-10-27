@@ -6,14 +6,14 @@ class ServerTests(unittest.TestCase):
 
     def test_auth_methods(self):
         self.assertRaises(TypeError, saturn.engine.Server)
-        server = saturn.engine.Server()
+        # server = saturn.engine.Server()
 
 class SocksTests(unittest.TestCase):
 
     def test_hello_none_auth(self):
         server = saturn.engine.Server('127.0.0.1', 1, custom_auth=["saturn.auth.none"])
         server.init_auth_methods()
-        dispatcher = saturn.dispatcher.Dispatcher(server, None, None, None)
+        dispatcher = saturn.dispatcher.Dispatcher(server, None, None)
         hello = saturn.socks.SocksHello(dispatcher, b'\x05\x02\x00\x02').reply()
         self.assertEqual(b"\x05\x00", bytes(hello))
         hello = saturn.socks.SocksHello(dispatcher, b'\x05\x01\x02').reply()
@@ -22,7 +22,7 @@ class SocksTests(unittest.TestCase):
     def test_hello_only_password(self):
         server = saturn.engine.Server('127.0.0.1', 1, custom_auth=["saturn.auth.dict"])
         server.init_auth_methods()
-        dispatcher = saturn.dispatcher.Dispatcher(server, None, None, None)
+        dispatcher = saturn.dispatcher.Dispatcher(server, None, None)
         hello = saturn.socks.SocksHello(dispatcher, b'\x05\x01\x00').reply()
         self.assertEqual(bytes(hello), b"\x05\xff")
         hello = saturn.socks.SocksHello(dispatcher, b'\x05\x01\x02').reply()
@@ -31,7 +31,7 @@ class SocksTests(unittest.TestCase):
     def test_hello_unknown(self):
         server = saturn.engine.Server('127.0.0.1', 1, custom_auth=["saturn.auth.dict"])
         server.init_auth_methods()
-        dispatcher = saturn.dispatcher.Dispatcher(server, None, None, None)
+        dispatcher = saturn.dispatcher.Dispatcher(server, None, None)
         hello = saturn.socks.SocksHello(dispatcher, b'\x05\x01\x05').reply()
         self.assertEqual(bytes(hello), b"\x05\xff")
 
@@ -43,7 +43,7 @@ class SocksTests(unittest.TestCase):
     def test_SocksAuthenticate(self):
         server = saturn.engine.Server('127.0.0.1', 1, custom_auth=["saturn.auth.dict"])
         server.init_auth_methods()
-        dispatcher = saturn.dispatcher.Dispatcher(server, None, None, None)
+        dispatcher = saturn.dispatcher.Dispatcher(server, None, None)
         dispatcher.state = saturn.state.WaitingAuthenticationData(2)
         login = 'USER_TEST'
         password = 'Test_password'

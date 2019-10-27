@@ -8,7 +8,6 @@ class Server:
     def __init__(self, host: typing.Union[IPv6Address, IPv4Address, str],
                  port: int,
                  tcp:bool=True, udp=False, custom_auth=None):
-
         self.host = host
         self.port = port
         self.tcp = tcp

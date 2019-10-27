@@ -13,7 +13,7 @@ python3 ./setup.py install
 ```
 ## Usage
 Please edit `config.py` file before starting your server.  
-By default proxying allowed to all hosts (`ALLOWED_DESTINATIONS =  [0.0.0.0/0]`).  You can specify single IP addresses 
+By default proxying allowed to all hosts (`ALLOWED_DESTINATIONS =  ["0.0.0.0/0"]`).  You can specify single IP addresses 
 (both IPv4 and IPv6) and subnets. 
 ```python3
 import saturn
