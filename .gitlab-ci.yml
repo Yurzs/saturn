@@ -1,7 +1,8 @@
 stages:
   - unittests
   - build
-  - docker_build
+#  - docker_build
+
 
 tests:
   stage: unittests
@@ -27,16 +28,15 @@ pypi_build:
     - twine upload dist/*
 
 
-docker_build:
-  stage: docker_build
-  tags:
-    - docker
-  script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
-  only:
-    - master
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
-  variables:
-    DOCKER_HOST: tcp://localhost:2375
+#docker_build:
+#  stage: docker_build
+#  image: docker
+#  tags:
+#    - docker
+#  script:
+#    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+#    - docker push "$CI_REGISTRY_IMAGE"
+#  only:
+#    - master
+#  before_script:
+#    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY

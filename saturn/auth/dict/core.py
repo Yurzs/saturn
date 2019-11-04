@@ -1,15 +1,22 @@
 import logging
 
+
 class Authenticator:
     method = 2
+    have_users = True
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):
             cls.instance = super().__new__(cls)
         return cls.instance
 
-    def __init__(self, **data):
-        self.users = data
+    def __init__(self, **options):
+        for option_name, option_value in options.items():
+            setattr(self, option_name, option_value)
+        self.users = {}
+
+    def import_users(self, userdict):
+        self.users = userdict
 
     async def authenticate(self, data):
         try:

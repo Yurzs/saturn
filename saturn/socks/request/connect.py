@@ -3,7 +3,7 @@ import socket
 from ipaddress import IPv4Address
 from ipaddress import ip_network
 
-from saturn import state, config
+from saturn import state
 from saturn.protocol import TcpClient
 from saturn.socks import reply
 from .base import SocksRequest
@@ -16,7 +16,7 @@ class SocksRequestConnect(SocksRequest):
         assert not isinstance(self.dispatcher.state, state.Connected)
         on_connect = self.dispatcher.loop.create_future()
         allowed_to = False
-        for addr in getattr(config, 'ALLOWED_DESTINATIONS', [ip_network('0.0.0.0/0')]):
+        for addr in getattr(self.dispatcher.server.config["Security"], 'allowed_destinations', ["0.0.0.0/0"]):
             if self.dst_addr in ip_network(addr):
                 allowed_to = True
                 break

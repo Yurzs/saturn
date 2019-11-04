@@ -1,5 +1,6 @@
 class Authenticator:
     method = 0
+    have_users = False
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):

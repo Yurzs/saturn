@@ -1,14 +1,24 @@
-from saturn import start_server
-import sys
+import argparse
+import os
+
+from saturn.engine import Server
+
+parser = argparse.ArgumentParser(description='Start Saturn SOCKS5 server', usage="python3 -m saturn [options]")
 
 
-def get_argv(index, default=None):
-    try:
-        return sys.argv[index]
-    except IndexError:
-        return default
+parser.add_argument('--host', type=str,
+                    help='IP address on which server will run (default: 0.0.0.0)', default='0.0.0.0')
+parser.add_argument('--port', type=int,
+                    help='port on which server will run (default: 8080)', default=8080)
+parser.add_argument('--config', type=str, help='path to custom config file. Overrides --host and --port values',
+                    default=os.path.dirname(__file__) + "/config.ini")
 
-host = get_argv(1, "0.0.0.0")
-port = get_argv(2, 8080)
+args = parser.parse_args()
 
-start_server(host, port)
+
+def start_server(host, port, config):
+    server = Server(host, port, config)
+    server.start()
+
+
+start_server(**args.__dict__)
